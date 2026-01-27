@@ -1,0 +1,57 @@
+# config.yaml
+
+local_data_dir: "/p/project/eelsaisdc/fastopt/cache" #"local_data" or ""
+
+# Hugging Face model to load
+model_name: "facebook/opt-125m"
+
+# Dataset settings
+dataset:
+  name: "/p/project/eelsaisdc/datasets/tokenized/tokenized_data_nshards_40_blocksize_1024" # "/p/project/eelsaisdc/datasets/ready_slimpajama"  #"wikitext"
+  sub_dataset: "wikitext-2-raw-v1"
+
+  # Dataset loading settings
+  big_dataset: True
+  num_shards: 20
+  num_train_tokens: 2e6
+
+# Tokenization / sequence settings
+block_size: 1024
+use_fast_tokenizer: True
+
+# FFF (Fast Finetuning Framework) settings
+model:
+  fff_depth: 3 # options: 1, 2, 3
+  strategy: "FF"  # options: FF, new_FFF, old_FFF, moe
+  from_scratch: True # False
+  moe_experts: 7
+  moe_k: 2
+
+# Trainer / TrainingArguments settings
+training:
+  output_dir: "./opt-finetuned-wikitext"
+  overwrite_output_dir: true
+  evaluation_strategy: "epoch"
+  eval_steps: 1
+  logging_strategy: "steps"
+  logging_steps: 200
+  learning_rate: 1e-4
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  num_train_epochs: 1
+  weight_decay: 0.01
+  gradient_checkpointing: True
+  gradient_accumulation_steps: 1
+  save_strategy: "epoch"
+  save_steps: 2
+  fp16: True
+
+  # wandb-specific fields
+  report_to: "wandb"
+  wandb_project: "opt-FFF"
+  group: "test_run"
+  # wandb_logdir: "./testlogdir"
+
+# Any custom / local classes you use can be referenced here if needed
+# For example, if you want to disable or enable FFF:
+use_custom_fff: true
